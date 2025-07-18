@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A rounded speech‑bubble that always points *down* toward the anchor view.
+/// 말풍선 모양의 툴팁 path
 struct TooltipBubble: Shape {
     var cornerRadius: CGFloat = 8
     var tailSize: CGFloat = 8
@@ -8,7 +8,6 @@ struct TooltipBubble: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         
-        // Main rounded rectangle (leaves space at the bottom for the tail)
         let bodyRect = CGRect(
             x: rect.minX,
             y: rect.minY,
@@ -20,7 +19,6 @@ struct TooltipBubble: Shape {
             cornerSize: CGSize(width: cornerRadius, height: cornerRadius)
         )
         
-        // Down‑facing triangular tail centred horizontally
         path.move(to: CGPoint(x: rect.midX - tailSize, y: bodyRect.maxY))
         path.addLine(to: CGPoint(x: rect.midX, y: bodyRect.maxY + tailSize))
         path.addLine(to: CGPoint(x: rect.midX + tailSize, y: bodyRect.maxY))
@@ -36,14 +34,12 @@ public struct TooltipModifier: ViewModifier {
     let backgroundColor: Color
     let textColor: Color
     
-    // MARK: ‑ Layout constants
-
     private let tailSize: CGFloat = 8
-    private let verticalGap: CGFloat = 20 // increase gap so bubble doesn’t hide content
+    private let verticalGap: CGFloat = 20
     
     public func body(content: Content) -> some View {
         content
-            .overlay(tooltipOverlay, alignment: .top) // bubble appears above
+            .overlay(tooltipOverlay, alignment: .top)
             .onTapGesture {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
                     isPresented.toggle()
@@ -51,7 +47,6 @@ public struct TooltipModifier: ViewModifier {
             }
     }
     
-    /// Builds the tooltip overlay.
     private var tooltipOverlay: some View {
         Group {
             if isPresented {
@@ -77,7 +72,6 @@ public struct TooltipModifier: ViewModifier {
 }
 
 public extension View {
-    /// Attaches a simple speech‑bubble tooltip that appears on tap.
     func tooltip(_ text: String,
                  backgroundColor: Color = Color(red: 0.15, green: 0.15, blue: 0.15),
                  textColor: Color = .white) -> some View
